@@ -5,6 +5,7 @@ CREATE TABLE users (
     password varchar(255) NOT NULL,
     created_at datetime(3) NOT NULL,
     updated_at datetime(3) NOT NULL,
+    deleted_at datetime(3) DEFAULT NULL,
     PRIMARY KEY (id),
     KEY idx_users_created_at (created_at),
     KEY idx_users_updated_at (updated_at),
