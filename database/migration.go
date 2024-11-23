@@ -4,7 +4,6 @@ import (
 	"budgetNest/internal/helpers"
 	"database/sql"
 	"fmt"
-	"github.com/go-sql-driver/mysql"
 	"os"
 	"path/filepath"
 	"slices"
@@ -18,30 +17,15 @@ type Migration struct {
 	Batch int
 }
 
-func RunMigrations(up bool) {
-	// Configuração de conexão MySQL
-	config := mysql.Config{
-		User:                 os.Getenv("DB_USER"),
-		Passwd:               os.Getenv("DB_PASS"),
-		DBName:               os.Getenv("DB_NAME"),
-		AllowNativePasswords: false,
-	}
-	db, err := sql.Open("mysql", config.FormatDSN())
-	helpers.CheckFatal(err, "Error connecting to database")
-
-	defer func(db *sql.DB) {
-		err := db.Close()
-		helpers.CheckError(err, "Error closing database connection")
-	}(db)
-
+func RunMigrations(db *sql.DB, up bool) {
 	if up {
-		err = runMigrationsUp(db, "../../database/migrations")
+		err := runMigrationsUp(db, "../../database/migrations")
 		helpers.CheckFatal(err, "Error running migrations up")
 		fmt.Println("Migrations up executed successfully!")
 		return
 	}
 
-	err = runMigrationsDown(db, "../../database/migrations")
+	err := runMigrationsDown(db, "../../database/migrations")
 	helpers.CheckFatal(err, "Error running migrations down")
 	fmt.Println("Migrations down executed successfully!")
 }
